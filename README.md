@@ -1,5 +1,5 @@
 # # Werden
-
+<img src="file_00000000aa388210b40b476159e35572.png" alt="Unser Zeichen des Werdens" width="320">
 > **Sein ist Werden.**
 
 Ein offenes Gedankenprojekt von Norman, entwickelt im Austausch mit ChatGPT und Gemini.
