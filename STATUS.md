@@ -1,6 +1,6 @@
 # Werden – Projektstatus
 
-Stand: 26. Oktober 2026 · Lokaler Entwurf für STATUS.md, noch nicht veröffentlicht.
+Stand: 26. Oktober 2026 · Aktueller Projektstatus.
 
 ## 1. Projekt und Arbeitsweise
 
