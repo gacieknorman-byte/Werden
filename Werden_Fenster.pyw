@@ -1,48 +1,20 @@
 """Werden – Dateien sichern, vergleichen und wiederherstellen.
 Doppelklick unter Windows mit installiertem Python. Keine Zusatzpakete.
 Kompatibel mit werden-rettungsanker-1. Sicherungen sind unverschlüsselt.
+werden_rettungsanker.py muss im selben Ordner liegen.
 """
 import argparse
 import base64
 import hashlib
 import json
-import re
 from pathlib import Path
 from datetime import datetime, timezone
+
+from werden_rettungsanker import inventory, load_backup
 
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
-
-
-def inventory(root):
-    if not root.is_dir():
-        raise ValueError('Projektordner fehlt.')
-    result = {}
-    for path in sorted(root.rglob('*')):
-        if path.is_symlink() or any(p.is_symlink() for p in path.parents):
-            continue
-        if path.is_file():
-            result[path.relative_to(root).as_posix()] = path.read_bytes()
-    return result
-
-
-def load_backup(path):
-    obj = json.loads(path.read_text(encoding='utf-8'))
-    if obj.get('format') != 'werden-rettungsanker-1':
-        raise ValueError('Unbekanntes Sicherungsformat.')
-    result = {}
-    for row in obj['files']:
-        name = row['path']
-        parts = name.split('/')
-        if (not name or '\\' in name or ':' in name or
-                any(p in ('', '.', '..') for p in parts) or name in result):
-            raise ValueError('Unsicherer oder doppelter Dateipfad.')
-        data = base64.b64decode(row['data'], validate=True)
-        if not re.fullmatch(r'[0-9a-f]{64}', row['sha256']) or digest(data) != row['sha256']:
-            raise ValueError('Beschädigte Sicherung: ' + name)
-        result[name] = data
-    return result
 
 
 import tkinter as tk

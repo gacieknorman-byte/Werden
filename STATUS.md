@@ -1,6 +1,6 @@
 # Werden – Projektstatus
 
-Stand: 26. Oktober 2026 · Aktueller Projektstatus.
+Stand: 28. Oktober 2026 · Aktueller Projektstatus.
 
 ## 1. Projekt und Arbeitsweise
 
@@ -17,11 +17,14 @@ Ausführlicher Kontext: [README](https://github.com/gacieknorman-byte/Werden/blo
 ## 2. Werkzeuge und geprüfter Stand
 
 - `werden_rettungsanker.py`: Prototyp 1.4 zum Sichern, Vergleichen und Wiederherstellen.
-- `Werden_Fenster.pyw`: Windows-Oberfläche mit eigener fachlicher Logik; die Prüfungen sind nicht vollständig mit dem Hauptprogramm vereinheitlicht.
-- Gegenprobe von Codex vom 26. Oktober unter Linux/Python 3.12.14: Eine gewöhnliche Sicherung wurde von beiden Dateiprüffunktionen korrekt eingelesen. Eine künstliche Sicherung mit `A.txt` und `a.txt` wurde vom Hauptprogramm zurückgewiesen, von der Fensterlogik angenommen.
-- Keine Prüfung der Oberfläche oder Wiederherstellung unter Windows in dieser Gegenprobe. Keine Reparatur umgesetzt.
+- `Werden_Fenster.pyw`: Die Oberfläche importiert jetzt `inventory()` und `load_backup()` aus `werden_rettungsanker.py`. Damit gelten beim Inventarisieren und Einlesen dieselben Pfad- und Sicherungsformatprüfungen. Beide Programmdateien müssen im selben Ordner liegen.
+- Eigene Prüfung von Codex vom 28. Oktober unter Linux/Python 3.12.14: `python -m unittest discover -s tests -v` besteht mit 8 Tests. Die [Regressionstests](tests/test_shared_validation.py) prüfen unter anderem Namenskollisionen, Datei-/Verzeichniskonflikte, ungültige Namen sowie fehlende Formatangaben und doppelte JSON-Schlüssel. Ungültige Pfade werden vor dem Anlegen des Wiederherstellungsordners abgewiesen; nicht zulässige Quellnamen vor dem Anlegen der Sicherungsdatei.
+- Gewöhnliche Sicherungen wurden in beiden Richtungen zwischen Kommandozeile und Fensterfunktionen geprüft und über die Fensterfunktion unter Linux erfolgreich wiederhergestellt. Dieselben Tests schlagen mit der früheren Fensterlogik fehl.
+- Keine Prüfung der grafischen Oberfläche oder Ausführung unter Windows. Schreiben, Wiederherstellen und Aufräumen bleiben teilweise eigene Logik der Oberfläche; vollständige fachliche Gleichheit ist damit nicht belegt.
 
-Geprüfte Dateifassungen: Rettungsanker `8858b36f5191b8c22d106f8554e632ec09e90aee`; Fenster `f30bbd222a3699ad069bc522758c9659e88a1195`.
+Geprüfte Dateifassungen vom 28. Oktober (Git-Blob-SHAs): Rettungsanker `8858b36f5191b8c22d106f8554e632ec09e90aee`; Fenster `73329140d83b04336628f3b2d50cb874ae4bb7c2`.
+
+Historischer Befund vom 26. Oktober unter Linux/Python 3.12.14: Eine gewöhnliche Sicherung wurde von beiden Dateiprüffunktionen korrekt eingelesen. Eine künstliche Sicherung mit `A.txt` und `a.txt` wurde vom Hauptprogramm zurückgewiesen, von der damaligen Fensterlogik (Git-Blob `f30bbd222a3699ad069bc522758c9659e88a1195`) angenommen. Damals wurde keine Reparatur umgesetzt und weder die Oberfläche noch die Wiederherstellung unter Windows geprüft.
 
 ## 3. Übergabe und offene Schritte
 
@@ -29,7 +32,7 @@ Dieser Text kann nach Veröffentlichung als gemeinsamer Einstieg dienen. Er sync
 
 Mögliche nächste Schritte:
 
-- Gemeinsame fachliche Funktionen für Fenster und Kommandozeile vorbereiten.
+- Windows-Oberfläche sowie Sicherung und Wiederherstellung unter Windows gezielt prüfen.
 - Diesen Status nach wichtigen Etappen knapp aktualisieren.
 - Später einen Kopierknopf für denselben Statusinhalt erwägen.
 
