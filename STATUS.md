@@ -20,7 +20,8 @@ Ausführlicher Kontext: [README](https://github.com/gacieknorman-byte/Werden/blo
 - `Werden_Fenster.pyw`: Die Oberfläche importiert jetzt `inventory()` und `load_backup()` aus `werden_rettungsanker.py`. Damit gelten beim Inventarisieren und Einlesen dieselben Pfad- und Sicherungsformatprüfungen. Beide Programmdateien müssen im selben Ordner liegen.
 - Eigene Prüfung von Codex vom 28. Oktober unter Linux/Python 3.12.14: `python -m unittest discover -s tests -v` besteht mit 8 Tests. Die [Regressionstests](tests/test_shared_validation.py) prüfen unter anderem Namenskollisionen, Datei-/Verzeichniskonflikte, ungültige Namen sowie fehlende Formatangaben und doppelte JSON-Schlüssel. Ungültige Pfade werden vor dem Anlegen des Wiederherstellungsordners abgewiesen; nicht zulässige Quellnamen vor dem Anlegen der Sicherungsdatei.
 - Gewöhnliche Sicherungen wurden in beiden Richtungen zwischen Kommandozeile und Fensterfunktionen geprüft und über die Fensterfunktion unter Linux erfolgreich wiederhergestellt. Dieselben Tests schlagen mit der früheren Fensterlogik fehl.
-- Keine Prüfung der grafischen Oberfläche oder Ausführung unter Windows. Schreiben, Wiederherstellen und Aufräumen bleiben teilweise eigene Logik der Oberfläche; vollständige fachliche Gleichheit ist damit nicht belegt.
+- Vom Nutzer durchgeführter Windows-Probelauf am 28. Oktober, anhand der Bildschirmfotos im Chat belegt: Die korrigierte Oberfläche startete. Das Programm meldete 5 Dateien gesichert und geprüft, beim Vergleich `Abweichungen: 0` und anschließend 5 Dateien in einem neuen Ausgabeordner wiederhergestellt und geprüft.
+- Dieser Windows-Probelauf deckt einen regulären Ablauf ab. Die 8 Regressionstests wurden unter Windows noch nicht ausgeführt; künstliche Pfadkonflikte wurden dort nicht gesondert über die Oberfläche geprüft. Schreiben, Wiederherstellen und Aufräumen bleiben teilweise eigene Logik der Oberfläche; vollständige fachliche Gleichheit ist damit nicht belegt.
 
 Geprüfte Dateifassungen vom 28. Oktober (Git-Blob-SHAs): Rettungsanker `8858b36f5191b8c22d106f8554e632ec09e90aee`; Fenster `73329140d83b04336628f3b2d50cb874ae4bb7c2`.
 
@@ -32,7 +33,7 @@ Dieser Text kann nach Veröffentlichung als gemeinsamer Einstieg dienen. Er sync
 
 Mögliche nächste Schritte:
 
-- Windows-Oberfläche sowie Sicherung und Wiederherstellung unter Windows gezielt prüfen.
+- Fehlerfälle und Abbrüche unter Windows gezielt prüfen, insbesondere ungültige Sicherungen und Pfadkonflikte; der reguläre Probelauf ist dokumentiert.
 - Diesen Status nach wichtigen Etappen knapp aktualisieren.
 - Später einen Kopierknopf für denselben Statusinhalt erwägen.
 
