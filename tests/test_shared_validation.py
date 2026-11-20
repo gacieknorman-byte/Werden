@@ -4,6 +4,7 @@ Aufruf im Projektordner: python -m unittest discover -s tests -v
 Python mit Tkinter wird auch für den Import der Fensterdatei benötigt.
 """
 import base64
+import errno
 import hashlib
 import importlib.machinery
 import importlib.util
@@ -14,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -31,7 +33,7 @@ class SharedValidationTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory(prefix='werden-test-')
         self.addCleanup(temporary.cleanup)
-        self.root = Path(temporary.name)
+        self.root = Path(temporary.name).resolve()
         self.data = b'Werden\x00\xff\n'
 
     def backup(self, names):
@@ -57,6 +59,23 @@ class SharedValidationTests(unittest.TestCase):
         (source / 'src' / 'data.bin').write_bytes(self.data)
         (source / 'Grüße.txt').write_text('Sein ist Werden.\n', encoding='utf-8')
         return source
+
+    def fail_during_write(self, target):
+        original_open = Path.open
+
+        def open_with_fault(path, mode='r', *args, **kwargs):
+            stream = original_open(path, mode, *args, **kwargs)
+            if path == target and mode in ('x', 'xb'):
+                original_write = stream.write
+
+                def write_with_fault(data):
+                    original_write(data[:1])
+                    raise OSError(errno.ENOSPC, 'Simulierter Schreibfehler')
+
+                stream.write = write_with_fault
+            return stream
+
+        return patch.object(Path, 'open', open_with_fault)
 
     def assert_same_files(self, source, restored):
         expected = {p.relative_to(source): p.read_bytes()
@@ -86,7 +105,7 @@ class SharedValidationTests(unittest.TestCase):
             ['a', 'a/b.txt'],
             ['a/b.txt', 'a'],
             ['a.txt', 'a.txt'],
-            ['CON.txt'], ['a?.txt'], ['a.'], ['a '],
+            ['CON.txt'], ['NUL .txt'], ['CON .dir/a.txt'], ['a?.txt'], ['a.'], ['a '],
             ['a\x01.txt'], ['a\u200b.txt'],
             [''], ['/a.txt'], ['../a.txt'], ['./a.txt'],
             ['a//b.txt'], ['a\\b.txt'], ['a:b.txt'],
@@ -123,7 +142,7 @@ class SharedValidationTests(unittest.TestCase):
     def test_inventory_conflicts_cannot_be_saved_from_window(self):
         for index, names in enumerate([
             ['A.txt', 'a.txt'], ['Dir/a.txt', 'dir/b.txt'],
-            ['CON.txt'], ['a?.txt'], ['a.'], ['a '],
+            ['CON.txt'], ['NUL .txt'], ['a?.txt'], ['a.'], ['a '],
         ]):
             with self.subTest(paths=names):
                 source = self.root / f'project-{index}'
@@ -170,6 +189,74 @@ class SharedValidationTests(unittest.TestCase):
         restored = self.root / 'restored'
         window.restore_project(backup, restored)
         self.assert_same_files(source, restored)
+
+    def test_legacy_backup_with_no_break_space_can_be_restored(self):
+        name = 'Projekt\N{NO-BREAK SPACE}Notiz.txt'
+        backup = self.write_backup(self.backup([name]))
+        restored = self.root / 'restored'
+        window.restore_project(backup, restored)
+        self.assertEqual((restored / name).read_bytes(), self.data)
+
+        new_backup = self.root / 'new-backup.json'
+        window.save_project(restored, new_backup)
+        self.assertEqual(core.load_backup(new_backup), {name: self.data})
+
+    def test_failed_window_save_cleans_up_and_can_be_retried(self):
+        source = self.project()
+        backup = self.root / 'backup.json'
+        with self.fail_during_write(backup), self.assertRaises(OSError) as raised:
+            window.save_project(source, backup)
+        self.assertEqual(raised.exception.errno, errno.ENOSPC)
+        self.assertFalse(backup.exists())
+
+        window.save_project(source, backup)
+        self.assertEqual(window.load_backup(backup), core.inventory(source))
+        backup_bytes = backup.read_bytes()
+        with self.assertRaises(FileExistsError):
+            window.save_project(source, backup)
+        self.assertEqual(backup.read_bytes(), backup_bytes)
+
+    def test_failed_window_restore_cleans_up_and_can_be_retried(self):
+        names = ['first.txt', 'sub/second.txt']
+        backup = self.write_backup(self.backup(names))
+        backup_bytes = backup.read_bytes()
+        restored = self.root / 'restored'
+        with self.fail_during_write(restored / 'sub' / 'second.txt'):
+            with self.assertRaises(OSError) as raised:
+                window.restore_project(backup, restored)
+        self.assertEqual(raised.exception.errno, errno.ENOSPC)
+        self.assertFalse(restored.exists())
+        self.assertEqual(backup.read_bytes(), backup_bytes)
+
+        window.restore_project(backup, restored)
+        for name in names:
+            self.assertEqual((restored / name).read_bytes(), self.data)
+        with self.assertRaises(FileExistsError):
+            window.restore_project(backup, restored)
+        self.assertTrue(restored.is_dir())
+
+    def test_window_checks_symlinks_before_resolving_paths(self):
+        source = self.project()
+        backup = self.write_backup(self.backup(['a.txt']))
+        source_link = self.root / 'project-link'
+        target_link = self.root / 'backup-link.json'
+        redirected = self.root / 'redirected.json'
+        try:
+            source_link.symlink_to(source, target_is_directory=True)
+            target_link.symlink_to(redirected)
+        except (NotImplementedError, OSError) as exc:
+            self.skipTest(f'Symlinks konnten nicht angelegt werden: {exc}')
+
+        with self.assertRaisesRegex(ValueError, 'Symlinks'):
+            window.save_project(source_link, self.root / 'new-backup.json')
+        with self.assertRaisesRegex(ValueError, 'Symlinks'):
+            window.compare_project(source_link, backup)
+        with self.assertRaisesRegex(ValueError, 'Symlinks'):
+            window.save_project(source, target_link)
+        with self.assertRaisesRegex(ValueError, 'Symlinks'):
+            window.restore_project(backup, source_link / 'restored')
+        self.assertFalse(redirected.exists())
+        self.assertFalse((source / 'restored').exists())
 
 
 if __name__ == '__main__':
