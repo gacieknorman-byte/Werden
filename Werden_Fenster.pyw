@@ -3,49 +3,36 @@ Doppelklick unter Windows mit installiertem Python. Keine Zusatzpakete.
 Kompatibel mit werden-rettungsanker-1. Sicherungen sind unverschlüsselt.
 werden_rettungsanker.py muss im selben Ordner liegen.
 """
-import argparse
-import base64
-import hashlib
-import json
-from pathlib import Path
-from datetime import datetime, timezone
-
-from werden_rettungsanker import inventory, load_backup
-
-
-def digest(data):
-    return hashlib.sha256(data).hexdigest()
-
-
-import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
-import threading
-import queue
 import os
+import queue
+import threading
+import tkinter as tk
+from datetime import datetime
+from pathlib import Path
+from tkinter import filedialog, messagebox, ttk
+
+from werden_rettungsanker import (
+    ensure_no_symlink, inventory, load_backup, restore_backup, write_backup,
+)
 
 
 def save_project(source, target):
-    root, target = Path(source).resolve(), Path(target).resolve()
+    source, target = Path(source), Path(target)
+    ensure_no_symlink(source)
+    ensure_no_symlink(target)
+    root, target = source.resolve(), target.resolve()
     if target == root or root in target.parents:
         raise ValueError("Bitte die Sicherung außerhalb des gewählten Projektordners speichern.")
     entries = inventory(root)
     if not entries:
         raise ValueError("Der Ordner enthält keine sicherbaren Dateien. Es wurde keine Sicherung angelegt.")
-    obj = {'format': 'werden-rettungsanker-1',
-           'created_utc': datetime.now(timezone.utc).isoformat(),
-           'files': [{'path': name, 'sha256': digest(data),
-                      'data': base64.b64encode(data).decode('ascii')}
-                     for name, data in entries.items()]}
-    with target.open('x', encoding='utf-8') as out:
-        json.dump(obj, out, ensure_ascii=False, indent=2)
-    if load_backup(target) != entries:
-        raise ValueError("Die neue Sicherung konnte nicht bestätigt werden.")
+    write_backup(target, entries)
     return f"Gesichert und geprüft: {len(entries)} Dateien.\n\n{target}\n\nEine Kopie auf einem getrennten Datenträger aufbewahren."
 
 
 def compare_project(source, backup):
     saved = load_backup(Path(backup))
-    current = inventory(Path(source).resolve())
+    current = inventory(Path(source))
     changes = []
     for name in sorted(saved.keys() | current.keys()):
         state = ('NEU' if name not in saved else 'FEHLT' if name not in current
@@ -56,17 +43,8 @@ def compare_project(source, backup):
 
 
 def restore_project(backup, destination):
-    saved = load_backup(Path(backup))
-    root = Path(destination).resolve()
-    root.mkdir(parents=True, exist_ok=False)
-    for name, data in saved.items():
-        target = root.joinpath(*name.split('/'))
-        target.parent.mkdir(parents=True, exist_ok=True)
-        with target.open('xb') as out:
-            out.write(data)
-        if digest(target.read_bytes()) != digest(data):
-            raise ValueError("Wiederherstellung konnte nicht bestätigt werden: " + name)
-    return f"Wiederhergestellt und geprüft: {len(saved)} Dateien.\n\n{root}\n\nDie Sicherungsdatei bleibt unverändert."
+    root, count = restore_backup(Path(backup), Path(destination), create_parents=True)
+    return f"Wiederhergestellt und geprüft: {count} Dateien.\n\n{root}\n\nDie Sicherungsdatei bleibt unverändert."
 
 
 class WerdenWindow:
@@ -147,7 +125,7 @@ class WerdenWindow:
                 detail = str(exc)
                 if isinstance(exc, FileExistsError):
                     detail = "Dieser Name ist bereits vergeben. Bitte einen neuen Namen wählen."
-                self.events.put((False, "Abbruch: " + detail + "\n\nBei einer unterbrochenen Wiederherstellung kann ein unvollständiger Ausgabeordner zurückbleiben. Die Sicherungsdatei bleibt erhalten.", None))
+                self.events.put((False, "Abbruch: " + detail, None))
         threading.Thread(target=work, daemon=True).start()
 
     def poll(self):

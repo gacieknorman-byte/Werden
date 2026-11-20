@@ -1,6 +1,16 @@
 # Werden – Projektstatus
 
-Stand: 28. Oktober 2026 · Aktueller Projektstatus.
+Stand: 20. November 2026
+
+Zum Wiedereinstieg dient der [gemeinsame Projektanker](PROJEKTANKER.md). Die bisherigen Prüfungen und Haltungsanker bleiben als Bezugspunkte erhalten.
+
+## Entwicklung seit dem 28. Oktober
+
+- **Rettungsanker.** Die Korrekturfassung vom 15. November führt das Schreiben und Wiederherstellen in Kommandozeile und Fenster über gemeinsame Funktionen aus. Abgefangene Schreibfehler werden aufgeräumt, sodass ein neuer Versuch möglich ist. In den Tests wies das Fenster bereits vorhandene Ziele ab und ließ ihre Inhalte erhalten. Das Sicherungsformat bleibt `werden-rettungsanker-1`. Unter Linux mit Python 3.12.14 bestanden am 20. November alle 12 automatischen Tests, einschließlich simulierter Schreibfehler und einer Wiederherstellung aus dem bisherigen Sicherungsformat. Die aktuelle Fensterfassung braucht noch einen manuellen Probelauf unter Windows. Ein Stromausfall oder ein erzwungenes Prozessende war kein Teil der Prüfung.
+- **Quellenwerkzeuge.** Laut Gegenprobe vom 15. November stimmten die neu berechneten SHA-256-Werte des Seitenbilds, zweier Textfassungen und des Manifests mit dem Erstbericht überein. Geprüft wurde die Übergabe einer Seite. Die Ausgangs-PDF und die übrigen Seiten waren im geprüften Übergabeordner nicht vorhanden. Für Quellenzugang 0.3 fehlen im Projektstand weiterhin fünf Original-Python-Dateien für das ausführbare Paket.
+- **WERDEN-Skill 0.2.** Die Kartenleseprobe ist als Vergleich zwischen zwei frischen Chats vorgesehen. Für die Übertragung zwischen Systemen bleiben das tatsächliche Laden der Version 0.2 und das Verhalten am selben Originalausschnitt zu prüfen.
+- **Historische Spurensuche Künzing.** Einzelne Straßenbefunde sind dokumentiert. Die Verbindung von Bruck zum Kastell Quintana bleibt offen. Nächster Schritt ist die Einsicht in den Originalschnitt oder das Profil zum Westbefund der Testgrabung 1994.
+- **Offline-KI.** Geplant ist ein aufrüstbarer Desktop für Spiele, Grafik und lokale KI. Vorhandene Teile werden vor der Auswahl von Neuteilen geprüft. Das Modell soll auf dem Desktop rechnen. Vorhandener Netzwerkspeicher eignet sich als Kandidat für Archiv und Sicherung. Der erste Nachweis ist ein erfolgreicher Kaltstart mit einem lokal gespeicherten Modell, bei getrenntem WLAN und LAN.
 
 ## 1. Projekt und Arbeitsweise
 
@@ -14,7 +24,7 @@ Wissenschaftliche Befunde, Deutungen und eigene Vermutungen unterscheiden. Der �
 
 Ausführlicher Kontext: [README](https://github.com/gacieknorman-byte/Werden/blob/main/README.md).
 
-## 2. Werkzeuge und geprüfter Stand
+## 2. Dokumentierter Werkzeugstand vom 28. Oktober
 
 - `werden_rettungsanker.py`: Prototyp 1.4 zum Sichern, Vergleichen und Wiederherstellen.
 - `Werden_Fenster.pyw`: Die Oberfläche importiert jetzt `inventory()` und `load_backup()` aus `werden_rettungsanker.py`. Damit gelten beim Inventarisieren und Einlesen dieselben Pfad- und Sicherungsformatprüfungen. Beide Programmdateien müssen im selben Ordner liegen.
@@ -30,11 +40,11 @@ Historischer Befund vom 26. Oktober unter Linux/Python 3.12.14: Eine gewöhnlich
 
 ## 3. Übergabe und offene Schritte
 
-Dieser Text kann nach Veröffentlichung als gemeinsamer Einstieg dienen. Er synchronisiert keine Chats automatisch. Jeder Assistent muss ihn tatsächlich lesen können. Wesentliche neue Ergebnisse anschließend datiert festhalten; übermittelte Berichte und eigene Prüfungen unterscheiden.
+Für einen neuen Gesprächsfaden den [Projektanker](PROJEKTANKER.md) und die für das Anliegen nötigen Dateien mitgeben. Wesentliche neue Ergebnisse datiert festhalten und bei jedem Befund die eigene Prüfung oder den zugrunde liegenden Bericht nennen.
 
 Mögliche nächste Schritte:
 
-- Fehleranzeigen und gezielte Abbrüche über die Windows-Oberfläche prüfen; der reguläre Probelauf und der automatische Regressionstestlauf sind dokumentiert.
+- Die Korrekturfassung vom 15. November unter Windows erneut mit einem Wegwerfordner sichern, vergleichen und in einen neuen Ordner zurückholen. Danach Fehleranzeigen und gezielte Abbrüche prüfen.
 - Diesen Status nach wichtigen Etappen knapp aktualisieren.
 - Später einen Kopierknopf für denselben Statusinhalt erwägen.
 
