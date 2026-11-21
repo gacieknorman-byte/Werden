@@ -1,6 +1,17 @@
 # Werden – Projektstatus
 
-Stand: 28. Oktober 2026 · Aktueller Projektstatus.
+Stand: 21. November 2026
+
+Zum Wiedereinstieg dient der [gemeinsame Projektanker](PROJEKTANKER.md). Die bisherigen Prüfungen und Haltungsanker bleiben als Bezugspunkte erhalten.
+
+## Entwicklung seit dem 28. Oktober
+
+- **Rettungsanker.** Die Korrekturfassung vom 15. November führt das Schreiben und Wiederherstellen in Kommandozeile und Fenster über gemeinsame Funktionen aus. Abgefangene Schreibfehler werden aufgeräumt, sodass ein neuer Versuch möglich ist. In den Tests wies das Fenster bereits vorhandene Ziele ab und ließ ihre Inhalte erhalten. Das Sicherungsformat bleibt `werden-rettungsanker-1`. Unter Linux mit Python 3.12.14 bestanden am 20. November und beim unabhängigen Lauf vom 21. November am Commit `d4500db` alle 12 automatischen Tests, einschließlich simulierter Schreibfehler und einer Wiederherstellung aus dem bisherigen Sicherungsformat. Am 21. November prüfte Norman die Fensterfassung aus `df13f97` auf Windows 11. Der Doppelklick startete die Oberfläche. Die Datei `Prüfung 1.txt` ließ sich sichern, mit null Abweichungen vergleichen und in einen frischen Ordner wiederherstellen. Eine einzeln gestartete `Werden_Fenster.pyw` blieb zunächst ohne sichtbare Rückmeldung. Beim Gegencheck mit der hier übernommenen Startschutz-Fassung erschien unter Windows der Hinweis, `werden_rettungsanker.py` in denselben Ordner zu legen und das Fenster erneut zu starten. Ein Stromausfall oder ein erzwungenes Prozessende war kein Teil der Prüfung.
+- **Quellenwerkzeuge.** Laut Gegenprobe vom 15. November stimmten die neu berechneten SHA-256-Werte des Seitenbilds, zweier Textfassungen und des Manifests mit dem Erstbericht überein. Geprüft wurde die Übergabe einer Seite. Die Ausgangs-PDF und die übrigen Seiten waren im geprüften Übergabeordner nicht vorhanden. Der geprüfte Export der installierten Fassung Quellenzugang 0.3 umfasst acht Projektdateien, darunter vier Python-Dateien. Die IIIF-Tests stehen in `test_quellenzugang.py`. Am 15. November bestanden am Export alle 14 Tests (ZIP mit 25.742 Byte, SHA-256 `a1d0cd3b23938012f0f5b6d8c540d2bc70196b85e5530b2c0334ec61419cd5ad`).
+- **WERDEN-Skill 0.2.** Die Kartenleseprobe ist als Vergleich zwischen zwei frischen Chats vorgesehen. Am 18. November listete Codex CLI den Skill im Testprojekt als aktiviert, im Kontrollprojekt fehlte er. Der ausdrückliche Aufruf durch ein Modell und der Vergleich am selben Kartenausschnitt stehen aus.
+- **WERDEN-Werkbank.** Die Web-App wurde am 15. November als Version 4 veröffentlicht. Sie liest den geprüften eigenen JSON-Export von 2.257.124 Byte wieder ein und bewahrt korrigierte Verweisbezeichnungen beim erneuten Import. Der Veröffentlichungsbericht dokumentiert zwölf bestandene Regressionstests.
+- **Historische Spurensuche Künzing.** Im Forschungsarbeitsbuch Version 2 vom 15. November lassen sich offene, abgeschlossene und alle Vorgänge unabhängig vom fachlichen Befundgrad anzeigen. Der Veröffentlichungsbericht dokumentiert acht bestandene Tests und eine Browserprobe. Einzelne Straßenbefunde sind dokumentiert. Die Verbindung von Bruck zum Kastell Quintana bleibt offen. Nächster Schritt ist die Einsicht in den Originalschnitt oder das Profil zum Westbefund der Testgrabung 1994.
+- **Offline-KI.** Geplant ist ein aufrüstbarer Desktop für Spiele, Grafik und lokale KI. Vorhandene Teile werden vor der Auswahl von Neuteilen geprüft. Das Modell soll auf dem Desktop rechnen. Vorhandener Netzwerkspeicher eignet sich als Kandidat für Archiv und Sicherung. Der erste Nachweis ist ein erfolgreicher Kaltstart mit einem lokal gespeicherten Modell, bei getrenntem WLAN und LAN.
 
 ## 1. Projekt und Arbeitsweise
 
@@ -14,7 +25,7 @@ Wissenschaftliche Befunde, Deutungen und eigene Vermutungen unterscheiden. Der �
 
 Ausführlicher Kontext: [README](https://github.com/gacieknorman-byte/Werden/blob/main/README.md).
 
-## 2. Werkzeuge und geprüfter Stand
+## 2. Dokumentierter Werkzeugstand vom 28. Oktober
 
 - `werden_rettungsanker.py`: Prototyp 1.4 zum Sichern, Vergleichen und Wiederherstellen.
 - `Werden_Fenster.pyw`: Die Oberfläche importiert jetzt `inventory()` und `load_backup()` aus `werden_rettungsanker.py`. Damit gelten beim Inventarisieren und Einlesen dieselben Pfad- und Sicherungsformatprüfungen. Beide Programmdateien müssen im selben Ordner liegen.
@@ -30,11 +41,11 @@ Historischer Befund vom 26. Oktober unter Linux/Python 3.12.14: Eine gewöhnlich
 
 ## 3. Übergabe und offene Schritte
 
-Dieser Text kann nach Veröffentlichung als gemeinsamer Einstieg dienen. Er synchronisiert keine Chats automatisch. Jeder Assistent muss ihn tatsächlich lesen können. Wesentliche neue Ergebnisse anschließend datiert festhalten; übermittelte Berichte und eigene Prüfungen unterscheiden.
+Für einen neuen Gesprächsfaden den [Projektanker](PROJEKTANKER.md) und die für das Anliegen nötigen Dateien mitgeben. Wesentliche neue Ergebnisse datiert festhalten und bei jedem Befund die eigene Prüfung oder den zugrunde liegenden Bericht nennen.
 
 Mögliche nächste Schritte:
 
-- Fehleranzeigen und gezielte Abbrüche über die Windows-Oberfläche prüfen; der reguläre Probelauf und der automatische Regressionstestlauf sind dokumentiert.
+- Der Schließschutz während einer laufenden Aktion wurde beim Windows-Test am 21. November nicht gesondert erprobt.
 - Diesen Status nach wichtigen Etappen knapp aktualisieren.
 - Später einen Kopierknopf für denselben Statusinhalt erwägen.
 

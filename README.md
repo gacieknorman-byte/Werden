@@ -2,11 +2,15 @@
 <img src="file_00000000aa388210b40b476159e35572.png" alt="Unser Zeichen des Werdens" width="320">
 > **Sein ist Werden.**
 
-Ein offenes Gedankenprojekt von Norman, entwickelt im Austausch mit ChatGPT und Gemini.
+Ein offenes Gedankenprojekt von Norman, entwickelt im Austausch mit ChatGPT, Gemini und Codex.
 
 Hier sammeln wir Gedanken, Fragen und Spuren einer Entwicklung: über Beobachter und Wahrnehmung, Begegnung und Wechselwirkung, Möglichkeiten und das, was daraus werden kann. Dieser Anfang darf wachsen, sich verändern und korrigiert werden.
 
 Diese ausführliche Projektfassung führt die bislang im Austausch festgehaltenen Denkstränge zusammen. Sie ist eine bearbeitbare Zusammenstellung, kein vollständiges Gesprächsprotokoll. Die Leitsätze bleiben Anker; ihre Bedeutung darf sich durch Erfahrung, Widerspruch und neues Wissen vertiefen.
+
+Der [gemeinsame Projektanker](PROJEKTANKER.md) hilft beim Wiederaufnehmen. Der [Projektstatus](STATUS.md) hält Prüfungen und offene Schritte fest.
+
+**Sicherungen wiederherstellen.** Bewahre beide Programmdateien des Rettungsankers zusammen mit der Sicherung auf. Die Kommandozeilenfassung vom 28. Oktober 2026 weist neuere Sicherungen ab, wenn ein Dateiname ein geschütztes Leerzeichen (`U+00A0`) enthält. Mit der zum Sichern verwendeten Fassung ließ sich der Testfall wiederherstellen.
 
 ## Inhalt
 

@@ -57,9 +57,11 @@ def valid_relpath(name):
         if not part or part in ('.', '..') or part[-1] in (' ', '.'):
             return False
         if any(ord(c) < 32 or 127 <= ord(c) <= 159 or
-               not c.isprintable() or c in '<>:"|?*' for c in part):
+               (not c.isprintable() and c != '\N{NO-BREAK SPACE}') or
+               c in '<>:"|?*' for c in part):
             return False
-        if RESERVED_WIN.fullmatch(part.split('.')[0]):
+        device_name = part.split('.', 1)[0].rstrip(' ')
+        if RESERVED_WIN.fullmatch(device_name):
             return False
     return True
 
@@ -161,6 +163,46 @@ def write_checked(path, data):
         raise
 
 
+def write_backup(target, entries):
+    obj = {
+        'format': 'werden-rettungsanker-1',
+        'created_utc': datetime.now(timezone.utc).isoformat(),
+        'files': [
+            {'path': name, 'sha256': digest(data),
+             'data': base64.b64encode(data).decode('ascii')}
+            for name, data in entries.items()
+        ],
+    }
+    payload = (json.dumps(obj, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+    write_checked(target, payload)
+
+
+def restore_backup(backup, destination, *, create_parents=False):
+    ensure_no_symlink(destination)
+    if destination.exists():
+        raise FileExistsError('Zielordner existiert bereits.')
+    saved = load_backup(backup)
+    root = destination.resolve()
+    if not create_parents and not root.parent.is_dir():
+        raise ValueError('Übergeordneter Ordner für das Rettungsziel fehlt.')
+    root.mkdir(parents=create_parents, exist_ok=False)
+    try:
+        for name, data in saved.items():
+            target = root.joinpath(*name.split('/'))
+            target.parent.mkdir(parents=True, exist_ok=True)
+            write_checked(target, data)
+    except BaseException as exc:
+        if root.exists():
+            try:
+                shutil.rmtree(root)
+            except OSError as cleanup_exc:
+                raise OSError(
+                    f'{exc} (Aufräumen von {root} fehlgeschlagen: {cleanup_exc})'
+                ) from exc
+        raise
+    return root, len(saved)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -180,17 +222,7 @@ def main():
         if not target.parent.is_dir():
             raise ValueError('Zielordner für die Sicherung fehlt.')
         entries = inventory(args.quelle)
-        obj = {
-            'format': 'werden-rettungsanker-1',
-            'created_utc': datetime.now(timezone.utc).isoformat(),
-            'files': [
-                {'path': name, 'sha256': digest(data),
-                 'data': base64.b64encode(data).decode('ascii')}
-                for name, data in entries.items()
-            ],
-        }
-        payload = (json.dumps(obj, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
-        write_checked(target, payload)
+        write_backup(target, entries)
         print('Gesichert und geprüft:', len(entries), 'Dateien. Kopie getrennt aufbewahren.')
     elif args.aktion == 'pruefen':
         saved, current = load_backup(args.ziel), inventory(args.quelle)
@@ -209,29 +241,8 @@ def main():
                 print('IDENTISCHE BYTES (keine unabhängigen Belege):', ', '.join(names))
         print('Abweichungen:', problems, '(Änderungen können beabsichtigt sein.)')
     else:
-        ensure_no_symlink(args.ziel)
-        if args.ziel.exists():
-            raise ValueError('Zielordner existiert bereits.')
-        saved = load_backup(args.quelle)
-        root = args.ziel.resolve()
-        if not root.parent.is_dir():
-            raise ValueError('Übergeordneter Ordner für das Rettungsziel fehlt.')
-        root.mkdir(parents=False, exist_ok=False)
-        try:
-            for name, data in saved.items():
-                target = root.joinpath(*name.split('/'))
-                target.parent.mkdir(parents=True, exist_ok=True)
-                write_checked(target, data)
-        except BaseException as exc:
-            if root.exists():
-                try:
-                    shutil.rmtree(root)
-                except OSError as cleanup_exc:
-                    raise OSError(
-                        f'{exc} (Aufräumen von {root} fehlgeschlagen: {cleanup_exc})'
-                    ) from exc
-            raise
-        print('Überprüfte Kopien wiederhergestellt:', len(saved), 'Originale unverändert.')
+        _, restored_count = restore_backup(args.quelle, args.ziel)
+        print('Überprüfte Kopien wiederhergestellt:', restored_count, 'Originale unverändert.')
 
 
 if __name__ == '__main__':
