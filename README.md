@@ -10,6 +10,8 @@ Diese ausführliche Projektfassung führt die bislang im Austausch festgehaltene
 
 Der [gemeinsame Projektanker](PROJEKTANKER.md) hilft beim Wiederaufnehmen. Der [Projektstatus](STATUS.md) hält Prüfungen und offene Schritte fest.
 
+**Sicherungen wiederherstellen.** Bewahre beide Programmdateien des Rettungsankers zusammen mit der Sicherung auf. Die Kommandozeilenfassung vom 28. Oktober 2026 weist neuere Sicherungen ab, wenn ein Dateiname ein geschütztes Leerzeichen (`U+00A0`) enthält. Mit der zum Sichern verwendeten Fassung ließ sich der Testfall wiederherstellen.
+
 ## Inhalt
 
 - [Unser Zeichen](#unser-zeichen)

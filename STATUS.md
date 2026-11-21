@@ -1,15 +1,16 @@
 # Werden – Projektstatus
 
-Stand: 20. November 2026
+Stand: 21. November 2026
 
 Zum Wiedereinstieg dient der [gemeinsame Projektanker](PROJEKTANKER.md). Die bisherigen Prüfungen und Haltungsanker bleiben als Bezugspunkte erhalten.
 
 ## Entwicklung seit dem 28. Oktober
 
-- **Rettungsanker.** Die Korrekturfassung vom 15. November führt das Schreiben und Wiederherstellen in Kommandozeile und Fenster über gemeinsame Funktionen aus. Abgefangene Schreibfehler werden aufgeräumt, sodass ein neuer Versuch möglich ist. In den Tests wies das Fenster bereits vorhandene Ziele ab und ließ ihre Inhalte erhalten. Das Sicherungsformat bleibt `werden-rettungsanker-1`. Unter Linux mit Python 3.12.14 bestanden am 20. November alle 12 automatischen Tests, einschließlich simulierter Schreibfehler und einer Wiederherstellung aus dem bisherigen Sicherungsformat. Die aktuelle Fensterfassung braucht noch einen manuellen Probelauf unter Windows. Ein Stromausfall oder ein erzwungenes Prozessende war kein Teil der Prüfung.
-- **Quellenwerkzeuge.** Laut Gegenprobe vom 15. November stimmten die neu berechneten SHA-256-Werte des Seitenbilds, zweier Textfassungen und des Manifests mit dem Erstbericht überein. Geprüft wurde die Übergabe einer Seite. Die Ausgangs-PDF und die übrigen Seiten waren im geprüften Übergabeordner nicht vorhanden. Für Quellenzugang 0.3 fehlen im Projektstand weiterhin fünf Original-Python-Dateien für das ausführbare Paket.
-- **WERDEN-Skill 0.2.** Die Kartenleseprobe ist als Vergleich zwischen zwei frischen Chats vorgesehen. Für die Übertragung zwischen Systemen bleiben das tatsächliche Laden der Version 0.2 und das Verhalten am selben Originalausschnitt zu prüfen.
-- **Historische Spurensuche Künzing.** Einzelne Straßenbefunde sind dokumentiert. Die Verbindung von Bruck zum Kastell Quintana bleibt offen. Nächster Schritt ist die Einsicht in den Originalschnitt oder das Profil zum Westbefund der Testgrabung 1994.
+- **Rettungsanker.** Die Korrekturfassung vom 15. November führt das Schreiben und Wiederherstellen in Kommandozeile und Fenster über gemeinsame Funktionen aus. Abgefangene Schreibfehler werden aufgeräumt, sodass ein neuer Versuch möglich ist. In den Tests wies das Fenster bereits vorhandene Ziele ab und ließ ihre Inhalte erhalten. Das Sicherungsformat bleibt `werden-rettungsanker-1`. Unter Linux mit Python 3.12.14 bestanden am 20. November und beim unabhängigen Lauf vom 21. November am Commit `d4500db` alle 12 automatischen Tests, einschließlich simulierter Schreibfehler und einer Wiederherstellung aus dem bisherigen Sicherungsformat. Die aktuelle Fensterfassung braucht noch einen manuellen Probelauf unter Windows. Ein Stromausfall oder ein erzwungenes Prozessende war kein Teil der Prüfung.
+- **Quellenwerkzeuge.** Laut Gegenprobe vom 15. November stimmten die neu berechneten SHA-256-Werte des Seitenbilds, zweier Textfassungen und des Manifests mit dem Erstbericht überein. Geprüft wurde die Übergabe einer Seite. Die Ausgangs-PDF und die übrigen Seiten waren im geprüften Übergabeordner nicht vorhanden. Der geprüfte Export der installierten Fassung Quellenzugang 0.3 umfasst acht Projektdateien, darunter vier Python-Dateien. Die IIIF-Tests stehen in `test_quellenzugang.py`. Am 15. November bestanden am Export alle 14 Tests (ZIP mit 25.742 Byte, SHA-256 `a1d0cd3b23938012f0f5b6d8c540d2bc70196b85e5530b2c0334ec61419cd5ad`).
+- **WERDEN-Skill 0.2.** Die Kartenleseprobe ist als Vergleich zwischen zwei frischen Chats vorgesehen. Am 18. November listete Codex CLI den Skill im Testprojekt als aktiviert, im Kontrollprojekt fehlte er. Der ausdrückliche Aufruf durch ein Modell und der Vergleich am selben Kartenausschnitt stehen aus.
+- **WERDEN-Werkbank.** Die Web-App wurde am 15. November als Version 4 veröffentlicht. Sie liest den geprüften eigenen JSON-Export von 2.257.124 Byte wieder ein und bewahrt korrigierte Verweisbezeichnungen beim erneuten Import. Der Veröffentlichungsbericht dokumentiert zwölf bestandene Regressionstests.
+- **Historische Spurensuche Künzing.** Im Forschungsarbeitsbuch Version 2 vom 15. November lassen sich offene, abgeschlossene und alle Vorgänge unabhängig vom fachlichen Befundgrad anzeigen. Der Veröffentlichungsbericht dokumentiert acht bestandene Tests und eine Browserprobe. Einzelne Straßenbefunde sind dokumentiert. Die Verbindung von Bruck zum Kastell Quintana bleibt offen. Nächster Schritt ist die Einsicht in den Originalschnitt oder das Profil zum Westbefund der Testgrabung 1994.
 - **Offline-KI.** Geplant ist ein aufrüstbarer Desktop für Spiele, Grafik und lokale KI. Vorhandene Teile werden vor der Auswahl von Neuteilen geprüft. Das Modell soll auf dem Desktop rechnen. Vorhandener Netzwerkspeicher eignet sich als Kandidat für Archiv und Sicherung. Der erste Nachweis ist ein erfolgreicher Kaltstart mit einem lokal gespeicherten Modell, bei getrenntem WLAN und LAN.
 
 ## 1. Projekt und Arbeitsweise
@@ -44,7 +45,7 @@ Für einen neuen Gesprächsfaden den [Projektanker](PROJEKTANKER.md) und die fü
 
 Mögliche nächste Schritte:
 
-- Die Korrekturfassung vom 15. November unter Windows erneut mit einem Wegwerfordner sichern, vergleichen und in einen neuen Ordner zurückholen. Danach Fehleranzeigen und gezielte Abbrüche prüfen.
+- Die Korrekturfassung vom 15. November unter Windows erneut mit einem Wegwerfordner sichern, vergleichen und in einen neuen Ordner zurückholen. Den Doppelklick über `pythonw.exe`, die Dialoge und den Schließschutz während eines laufenden Vorgangs prüfen. In einer separaten Testkopie `Werden_Fenster.pyw` ohne das Nachbarmodul `werden_rettungsanker.py` starten und festhalten, ob eine Fehlermeldung sichtbar wird. Der Import erfolgt vor der Fehlerbehandlung für laufende Aktionen.
 - Diesen Status nach wichtigen Etappen knapp aktualisieren.
 - Später einen Kopierknopf für denselben Statusinhalt erwägen.
 
