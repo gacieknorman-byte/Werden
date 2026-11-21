@@ -11,9 +11,19 @@ from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from werden_rettungsanker import (
-    ensure_no_symlink, inventory, load_backup, restore_backup, write_backup,
-)
+try:
+    from werden_rettungsanker import (
+        ensure_no_symlink, inventory, load_backup, restore_backup, write_backup,
+    )
+except ModuleNotFoundError as exc:
+    if exc.name != "werden_rettungsanker" or __name__ != "__main__":
+        raise
+    messagebox.showerror(
+        "WERDEN – Start nicht möglich",
+        "Die Datei werden_rettungsanker.py fehlt. Lege sie in denselben Ordner "
+        "wie Werden_Fenster.pyw und starte das Fenster erneut.",
+    )
+    raise SystemExit(1)
 
 
 def save_project(source, target):
